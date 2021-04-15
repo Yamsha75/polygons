@@ -1,0 +1,27 @@
+<def name="Polygon colshape editor polugin">
+    <element name="vertex" friendlyname="Vertex">
+        <data name="position" type="coord3d" required="true" default="0,0,0" />
+        <data name="next" type="element:vertex" required="false" default="" />
+        <marker editorOnly="true" type="checkpoint" size="0.25" color="#000000ee" />
+    </element>
+    
+    <element name="polygon" friendlyname="Polygon">
+        <data name="position" type="coord3d" required="true" default="0,0,0" />
+        <data name="first" type="element:vertex" required="false" default="" />
+        <marker editorOnly="true" type="checkpoint" size="1" color="#000000ee" />
+    </element>
+
+    <script src="edf/assert.lua" type="server" />
+    <script src="edf/interfaces.lua" type="server" />
+    <script src="edf/editor-elements.lua" type="server" />
+    <script src="edf/polygons.lua" type="server" />
+    <script src="edf/colshapes.lua" type="server" />
+    <script src="edf/edf-server.lua" type="server" />
+
+    <script src="edf/assert.lua" type="client" />
+    <script src="edf/interfaces.lua" type="client" />
+    <script src="edf/editor-elements.lua" type="client" />
+    <script src="edf/polygons.lua" type="client" />
+    <script src="edf/draw-edges.lua" type="client" />
+    <script src="edf/edf-client.lua" type="client" />
+</def>

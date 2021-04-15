@@ -1,0 +1,10 @@
+<meta>
+    <info author="yamsha@dzakub.com" type="script" name="polygons"
+        description="editor plugin for creating polygon colshapes" version="1.0.0"
+        edf:definition="edf/polygons.edf" />
+    <oop>true</oop>
+
+    <script src="utils.lua" type="server" />
+    <script src="colshapes.lua" type="server" />
+    <script src="mapmanager.lua" type="server" />
+</meta>
