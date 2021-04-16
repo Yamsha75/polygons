@@ -15,11 +15,11 @@ function createColshape(polygon)
 
     if not vertices or #vertices < 3 then return false end
 
-    local x, y = getElementProperty(polygon, "position") -- colshape's "center" position
+    local x, y, _ = getElementProperty(polygon, "position") -- colshape's "center" position
     local coords = {} -- list of colshape's vertices' (x, y) positions
 
     for index, vertex in ipairs(vertices) do
-        local x, y = getElementProperty(vertex, "position")
+        local x, y, _ = getElementProperty(vertex, "position")
         coords[index * 2 - 1] = x
         coords[index * 2] = y
     end

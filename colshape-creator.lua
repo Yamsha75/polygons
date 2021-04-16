@@ -86,7 +86,7 @@ local function getPolygonVertices(polygon)
     return vertices
 end
 
-local function createPolygonColshape(polygon)
+local function createColshapeFromPolygon(polygon)
     local vertices = getPolygonVertices(polygon)
 
     if not vertices or #vertices < 3 then
@@ -109,29 +109,57 @@ local function createPolygonColshape(polygon)
         return false
     end
 
+    -- setting up ways to retrieve this colshape from outside resources:
+    -- colshapeID is based on its "polygon-center" element ID
+    local polygonID = getElementID(polygon) -- eg. "polygon-center (1)"
+    setElementID(colshape, polygonID .. " colshape") -- eg. "polygon-center (1) colshape"
     setElementData(polygon, "polygon-colshape", colshape)
     setElementParent(colshape, polygon)
 
     return colshape
 end
 
-function createResourcePolygonColshapes(resourceRootElement)
-    for _, polygon in ipairs(getElementsByType(POLYGON_TYPE, resourceRootElement)) do
-        if not getElementData(polygon, "polygon-colshape") then
-            local colshape = createPolygonColshape(polygon)
-            if not colshape then
-                outputDebugString(string.format(
-                    "Could not create colshape using %s:%s from resource:%s!",
-                    POLYGON_TYPE, getElementID(polygon),
-                    getElementID(resourceRootElement)), 1)
+function createColshapesFromResource(resource)
+    local index = 0
+    local colshapes = {}
+
+    for _, map in ipairs(getElementsByType("map", getResourceRootElement(resource))) do
+        for _, polygon in ipairs(getElementsByType(POLYGON_TYPE, map)) do
+            if not isElement(getElementData(polygon, "polygon-colshape")) then
+                local colshape = createColshapeFromPolygon(polygon)
+                if colshape then
+                    index = index + 1
+                    colshapes[index] = colshape
+                else
+                    local resourceName = getResourceName(resource)
+                    local mapName = getElementID(map)
+                    if mapName == resourceName then
+                        outputDebugString(string.format(
+                            "Could not create colshape using %s:%s from map:%s!",
+                            POLYGON_TYPE, getElementID(polygon), mapName), 1)
+                    else
+                        outputDebugString(string.format(
+                            "Could not create colshape using %s:%s from map:%s " ..
+                                "(resource:%s)!", POLYGON_TYPE, getElementID(polygon),
+                            mapName, resourceName), 1)
+                    end
+                end
             end
         end
     end
+
+    return index > 0 and colshapes or false
 end
 
-local function onThisResourceStartHandler()
-    if not IS_EDF_RESOURCE then
-        createResourcePolygonColshapes(resourceRoot)
+if not LOADER_NAME then
+    local thisResource = getThisResource()
+
+    local colshapes = createColshapesFromResource(thisResource)
+    if colshapes then
+        outputDebugString(string.format("%s: loaded %d polygon colshapes",
+            getResourceName(thisResource), #colshapes), 3)
+    else
+        outputDebugString(string.format("%s: found no polygons to create colshapes",
+            getResourceName(thisResource)), 2)
     end
 end
-addEventHandler("onResourceStart", resourceRoot, onThisResourceStartHandler)
