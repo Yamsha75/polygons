@@ -5,7 +5,7 @@ This resource provides an easy way to create colShape polygons using built-in ed
 
 It works well with Editor's undo/redo function, and supports multiple players, so you can work with friends on your fancy colshapes!
 
-# Example of using it
+# Example of using it in editor
 https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9464-1ee0b7008fd4.mp4
 # Getting started
 
@@ -39,7 +39,7 @@ https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9
 - Last selected colShape (red) is saved for each player, and every new vertex created by a player will be attached to the last vertex of that player's selected colShape.
 - When placing a vertex, hold `LCTRL` to immediately create a new one attached to it. You can easily place multiple vertices this way (shown in video above).
 - When creating a new vertex, while having another vertex selected (with red bounding box around it), the new vertex will be inserted after the selected and before selected's next vertex (if it exists).
-- You can create loops with vertices, but they are not necessary. The last edge is always there, even if the arrow is not drawn. Use `/showpoly` to see for yourself! If you don't see a yellow colShape outline, remember that a polygon requires at least 3 vertices!
+- You can create loops with vertices, but they are not necessary. The last edge is always there, even if the arrow is not drawn. Use `/showpoly` to see for yourself! If you don't see a yellow colShape outline, remember that every polygon requires a `polygon-center` element and at least 3 vertices!
 - Rule of thumb for verifying colShapes, if the colShape (yellow outline with infinite height) is seen, it will be correctly recreated in the server.
 - If you destroy a vertex, its previous vertex may have it's "next" property set to that destroyed vertex. This will produce a warning when creating colShapes in server to let you know something is wrong, but it can be easily fixed by simply loading the map in Editor and saving it again. Non-existing pointers to next vertices will be removed! 
 ## How to use it in server
