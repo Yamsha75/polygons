@@ -30,15 +30,6 @@ function createColshape(polygon)
 
     setElementParent(colshape, polygon)
 
-    local chain = {}
-    local currentElement = colshape
-    while currentElement and currentElement ~= root do
-        table.insert(chain, inspect(currentElement))
-        currentElement = getElementParent(currentElement)
-    end
-
-    outputConsole(table.concat(chain, " -> "))
-
     return colshape
 end
 
