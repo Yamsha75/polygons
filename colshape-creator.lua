@@ -94,15 +94,16 @@ local function createPolygonColshape(polygon)
         return false
     end
 
-    local x, y = getElementPosition(polygon)
-    local colshapePosition = Vector2(x, y) -- colshape's "center" position
+    local x, y, _ = getElementPosition(polygon) -- colshape's "center" position
     local coords = {} -- colshape's vertices' (x, y) positions
+
     for index, vertex in ipairs(vertices) do
-        x, y = getElementPosition(vertex)
-        coords[index] = Vector2(x, y)
+        local x, y, _ = getElementPosition(vertex)
+        coords[index * 2 - 1] = x
+        coords[index * 2] = y
     end
 
-    local colshape = createColPolygon(colshapePosition, unpack(coords))
+    local colshape = createColPolygon(x, y, unpack(coords))
     if not colshape then
         outputDebugString("createColPolygon returned false!", 1)
         return false
