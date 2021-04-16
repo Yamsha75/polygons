@@ -1,3 +1,6 @@
+# How it works
+https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9464-1ee0b7008fd4.mp4
+
 # Getting started
 To use this editor plugin, simply add this resource to your resources in
 `MultiTheftAuto/server/mods/deathmatch/resources`. Launch editor (must be restarted if
