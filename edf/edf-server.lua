@@ -1,46 +1,47 @@
 local function onMapOpenedHandler()
-    local nextVertex
-    for _, vertex in ipairs(getEditorElementsByType("vertex")) do
+    for _, vertex in ipairs(getEditorElementsByType(VERTEX_TYPE)) do
         if isElementValid(vertex) then
-            nextVertex = getNextVertex(vertex)
+            local nextVertex = getNextVertex(vertex)
             if nextVertex then
                 if isElement(nextVertex) then
-                    if nextVertex.type ~= "vertex" then
-                        outputDebugString(string.format(
-                            "vertex:%s property 'next' value %s:%s is an incorrect " ..
-                                "element! Expected vertex!", vertex.id, nextVertex.type,
-                            nextVertex.id), 2)
+                    if getElementType(nextVertex) ~= VERTEX_TYPE then
                         setNextVertex(vertex, nil)
+                        outputDebugString(string.format(
+                            "%s:%s property 'next' value %s:%s is an incorrect " ..
+                                "element! Expected %s!", VERTEX_TYPE,
+                            getElementID(vertex), getElementType(nextVertex),
+                            getElementID(nextVertex), VERTEX_TYPE), 2)
                     end
                 else
-                    outputDebugString(string.format(
-                        "vertex:%s property 'next' value is incorrect! Expected " ..
-                            "vertex or nil, got string:%s!", vertex.id, nextVertex), 2)
                     setNextVertex(vertex, nil)
+                    outputDebugString(string.format(
+                        "%s:%s property 'next' value is incorrect! Expected %s or " ..
+                            "nil, got string:%s!", VERTEX_TYPE, getElementID(vertex),
+                        VERTEX_TYPE, nextVertex), 2)
                 end
             end
         end
     end
 
-    local firstVertex
-    for _, polygon in ipairs(getEditorElementsByType("polygon")) do
+    for _, polygon in ipairs(getEditorElementsByType(POLYGON_TYPE)) do
         if isElementValid(polygon) then
-            firstVertex = getFirstVertex(polygon)
+            local firstVertex = getFirstVertex(polygon)
             if firstVertex then
                 if isElement(firstVertex) then
-                    if firstVertex.type == "vertex" then
+                    if getElementType(firstVertex) == VERTEX_TYPE then
                         createColshape(polygon)
                     else
-                        outputDebugString(string.format(
-                            "polygon:%s property 'first' value %s:%s is an incorrect " ..
-                                "element! Expected vertex!", polygon.id,
-                            firstVertex.type, firstVertex.id), 2)
                         setFirstVertex(polygon, nil)
+                        outputDebugString(string.format(
+                            "%s:%s property 'first' value %s:%s is an incorrect " ..
+                                "element! Expected %s!", POLYGON_TYPE,
+                            getElementID(polygon), getElementType(firstVertex),
+                            getElementID(firstVertex), VERTEX_TYPE), 2)
                     end
                 end
             else
-                outputDebugString(string.format(
-                    "polygon:%s doesn't have a first vertex", polygon.id), 1)
+                outputDebugString(string.format("%s:%s doesn't have a first vertex",
+                    POLYGON_TYPE, getElementID(polygon)), 1)
             end
         end
     end
@@ -50,22 +51,30 @@ end
 addEventHandler("onMapOpened", root, onMapOpenedHandler)
 
 function onStop()
-    for _, polygon in ipairs(getEditorElementsByType("polygon")) do
+    for _, polygon in ipairs(getEditorElementsByType(POLYGON_TYPE)) do
         destroyColshape(polygon)
     end
 end
 
 local function onElementCreateHandler()
-    if not isElementTypeInThisEDF(source.type) then return end
+    local sourceElementType = getElementType(source)
+    if not isElementTypeInThisEDF(sourceElementType) then return end
 
-    if source.type == "polygon" then
+    if sourceElementType == POLYGON_TYPE then
         if isElementValid(getFirstVertex(source)) then recreateAllColshapes() end
-    elseif source.type == "vertex" then
+    elseif sourceElementType == VERTEX_TYPE then
         local nextVertex = getNextVertex(source)
         if isElementValid(nextVertex) then
-            -- find all vertices with their next set to nextVertex and update their next
-            -- to the newly created vertex
-            for _, vertex in ipairs(getEditorElementsByType("vertex")) do
+            -- check if nextVertex is some polygon's 'first'
+            for _, polygon in ipairs(getEditorElementsByType(POLYGON_TYPE)) do
+                if getFirstVertex(polygon) == nextVertex then
+                    setFirstVertex(polygon, source)
+                end
+            end
+
+            -- find all vertices with their 'next' set to nextVertex and update their
+            -- 'next' to the newly created vertex
+            for _, vertex in ipairs(getEditorElementsByType(VERTEX_TYPE)) do
                 if vertex ~= source and vertex ~= nextVertex and isElementValid(vertex) then
                     if getNextVertex(vertex) == nextVertex then
                         setNextVertex(vertex, source)
@@ -84,18 +93,19 @@ end
 addEventHandler("onElementCreate", root, onElementCreateHandler)
 
 local function onElementPropertyChanged(propertyName)
-    if not isElementTypeInThisEDF(source.type) or not isEditorElement(source) then
+    local sourceElementType = getElementType(source)
+    if not isElementTypeInThisEDF(sourceElementType) or not isEditorElement(source) then
         return
     end
 
-    if source.type == "polygon" then
+    if sourceElementType == POLYGON_TYPE then
         if propertyName == "first" then
-            -- changing any polygon's first vertex forces recreating all colshapes
+            -- changing any polygon's 'first' forces recreating all colshapes
             recreateAllColshapes()
         end
-    elseif source.type == "vertex" then
+    elseif sourceElementType == VERTEX_TYPE then
         if propertyName == "next" then
-            -- changing any vertex'es next forces recreating all colshapes
+            -- changing any vertex'es 'next' forces recreating all colshapes
             recreateAllColshapes()
         elseif propertyName == "position" then
             -- changing any vertex'es position forces recreating its polygon's colshape
@@ -110,19 +120,29 @@ end
 addEventHandler("onElementPropertyChanged", root, onElementPropertyChanged)
 
 local function onElementDestroyHandler()
-    if not isElementTypeInThisEDF(source.type) or not isEditorElement(source) then
+    local sourceElementType = getElementType(source)
+    if not isElementTypeInThisEDF(sourceElementType) or not isEditorElement(source) then
         return
     end
 
-    if source.type == "polygon" then
+    if sourceElementType == POLYGON_TYPE then
         destroyColshape(source)
-    elseif source.type == "vertex" then
+    elseif sourceElementType == VERTEX_TYPE then
         local nextVertex = getNextVertex(source)
         if isElementValid(nextVertex) then
-            -- find source's previous vertices and set their next to source's next
-            for _, vertex in ipairs(getEditorElementsByType("vertex")) do
+            -- check if source was some polygon's 'first'
+            for _, polygon in ipairs(getEditorElementsByType(POLYGON_TYPE)) do
+                if getFirstVertex(polygon) == source then
+                    setFirstVertex(polygon, nextVertex)
+                end
+            end
+
+            -- find source's previous vertices and set their 'next' to source's 'next'
+            local previousFound = false
+            for _, vertex in ipairs(getEditorElementsByType(VERTEX_TYPE)) do
                 if vertex ~= source and vertex ~= nextVertex then
                     if getNextVertex(vertex) == source then
+                        previousFound = true
                         setNextVertex(vertex, nextVertex)
                     end
                 end

@@ -1,37 +1,37 @@
 function setFirstVertex(polygon, vertex)
-    assertType(polygon, "polygon", 1)
-    if vertex then assertType(vertex, "vertex", 2) end
+    assertArgumentType(polygon, POLYGON_TYPE, 1)
+    if vertex ~= nil then assertArgumentType(vertex, VERTEX_TYPE, 2) end
 
     return setElementProperty(polygon, "first", vertex)
 end
 
 function getFirstVertex(polygon)
-    assertType(polygon, "polygon")
+    assertArgumentType(polygon, POLYGON_TYPE)
 
     return getElementProperty(polygon, "first")
 end
 
 function setNextVertex(vertex, nextVertex)
-    assertType(vertex, "vertex", 1)
-    if nextVertex then assertType(nextVertex, "vertex", 2) end
+    assertArgumentType(vertex, VERTEX_TYPE, 1)
+    if nextVertex ~= nil then assertArgumentType(nextVertex, VERTEX_TYPE, 2) end
 
     return setElementProperty(vertex, "next", nextVertex)
 end
 
 function getNextVertex(vertex)
-    assertType(vertex, "vertex")
+    assertArgumentType(vertex, VERTEX_TYPE)
 
     return getElementProperty(vertex, "next")
 end
 
 function getPolygonVertices(polygon)
-    assertType(polygon, "polygon")
+    assertArgumentType(polygon, POLYGON_TYPE)
 
     local firstVertex = getFirstVertex(polygon)
     if not isElementValid(firstVertex) then return false end
 
     local vertices = {firstVertex} -- list of vertices in order from first to last
-    local visited = {[firstVertex] = true} -- used to stop loop from running forever
+    local visited = {[firstVertex] = true} -- used to halt while loop if vertices loop
     local nextVertex = getNextVertex(firstVertex)
 
     while isElementValid(nextVertex) and not visited[nextVertex] do
@@ -44,10 +44,10 @@ function getPolygonVertices(polygon)
 end
 
 function getVertexPolygon(theVertex)
-    assertType(theVertex, "vertex")
+    assertArgumentType(theVertex, VERTEX_TYPE)
 
     local vertices
-    for _, polygon in ipairs(getEditorElementsByType("polygon")) do
+    for _, polygon in ipairs(getEditorElementsByType(POLYGON_TYPE)) do
         if isElementValid(polygon) then
             vertices = getPolygonVertices(polygon)
             if vertices then

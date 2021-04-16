@@ -1,36 +1,36 @@
-local EDF_ELEMENT_TYPES = {["polygon"] = true, ["vertex"] = true}
+POLYGON_TYPE = "polygon-center"
+VERTEX_TYPE = "polygon-vertex"
+local EDF_ELEMENT_TYPES = {[POLYGON_TYPE] = true, [VERTEX_TYPE] = true}
 
-local workingDimension = editor_main.getWorkingDimension()
-local destroyedElementsDimension = workingDimension + 1
-local mapContainer = getElementsByType("mapContainer")[1]
+local WORKING_DIMENSION = editor_main.getWorkingDimension()
+local DESTROYED_ELEMENTS_DIMENSION = WORKING_DIMENSION + 1
+local MAP_CONTAINER = getElementsByType("mapContainer")[1]
 
 function isElementTypeInThisEDF(elementType)
+    assertArgumentType(elementType, "string")
+
     return EDF_ELEMENT_TYPES[elementType] == true
 end
 
 function getEditorElementsByType(elementType)
-    assertType(elementType, "string")
+    assertArgumentType(elementType, "string")
 
-    return getElementsByType(elementType, mapContainer)
+    return getElementsByType(elementType, MAP_CONTAINER)
 end
 
 function isElementDestroyed(element)
-    assertElement(element)
+    assertArgumentIsElement(element)
 
-    return edf.edfGetElementDimension(element) == destroyedElementsDimension
+    return edf.edfGetElementDimension(element) == DESTROYED_ELEMENTS_DIMENSION
 end
 
 function isEditorElement(element)
-    assertElement(element)
+    assertArgumentIsElement(element)
 
-    local parent = element.parent
-    while parent and parent ~= mapContainer do parent = parent.parent end
+    local parent = getElementParent(element)
+    while parent and parent ~= MAP_CONTAINER do parent = getElementParent(parent) end
 
-    if parent then
-        return true
-    else
-        return false
-    end
+    return parent == MAP_CONTAINER
 end
 
 function isElementValid(element)
@@ -39,8 +39,8 @@ function isElementValid(element)
 end
 
 function getEditorRepresentation(theElement, representationElementType)
-    assertElement(theElement, 1)
-    assertType(representationElementType, "string", 2)
+    assertArgumentIsElement(theElement, 1)
+    assertArgumentType(representationElementType, "string", 2)
 
     for _, element in ipairs(getElementsByType(representationElementType, theElement)) do
         if element ~= edf.edfGetHandle(element) then return element end
@@ -49,8 +49,8 @@ function getEditorRepresentation(theElement, representationElementType)
 end
 
 function setElementProperty(element, key, value)
-    assertElement(element, 1)
-    assertType(key, "string", 2)
+    assertArgumentIsElement(element, 1)
+    assertArgumentType(key, "string", 2)
 
     if key == "position" then return edf.edfSetElementPosition(element, value) end
 
@@ -58,8 +58,8 @@ function setElementProperty(element, key, value)
 end
 
 function getElementProperty(element, key)
-    assertElement(element, 1)
-    assertType(key, "string", 2)
+    assertArgumentIsElement(element, 1)
+    assertArgumentType(key, "string", 2)
 
     if key == "position" then return edf.edfGetElementPosition(element) end
 

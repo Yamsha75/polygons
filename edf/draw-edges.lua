@@ -1,71 +1,115 @@
--- constants
-local POLYGON_UPDATE_INTERVAL = 125
-local LINE_UPDATES_PER_FRAME = 10
-
--- colors
+-- BASED ON MTA RACE GAMEMODE EDF BY arc_
+------------
+-- COLORS --
+------------
 local SELECTED_COLOR = {getColorFromString("#FE0000EF")}
 local DEFAULT_COLOR = {getColorFromString("#1337BEEF")}
 local DISCONNECTED_COLOR = {getColorFromString("#000000EF")}
+local UPDATE_DELAY = 100 -- ms
+
+-- this timer is used to coalesce multiple calls to updateAllPolygonColors, because
+-- in some circumstances it is called multiple times in quick succession; with this
+-- timer, each call waits with execution for UPDATE_DELAY, unless a next call appears
+-- within this time, which will reset the timer; see updateAllPolygonColors function
+local colorUpdateDelayTimer = nil
 
 function updatePolygonColors(polygon, isSelected)
-    local color
-    if isSelected then
-        color = SELECTED_COLOR
-    else
-        color = DEFAULT_COLOR
-    end
+    assertArgumentType(polygon, POLYGON_TYPE, 1)
+    if isSelected ~= nil then assertArgumentType(isSelected, "boolean", 2) end
+
+    local color = isSelected and SELECTED_COLOR or DEFAULT_COLOR
 
     local marker = getEditorRepresentation(polygon, "marker")
     if marker then setMarkerColor(marker, unpack(color)) end
 
-    for _, vertex in ipairs(getPolygonVertices(polygon)) do
-        marker = getEditorRepresentation(vertex, "marker")
-        if marker then setMarkerColor(marker, unpack(color)) end
+    local vertices = getPolygonVertices(polygon)
+    if vertices then
+        for _, vertex in ipairs(vertices) do
+            local marker = getEditorRepresentation(vertex, "marker")
+            if marker then setMarkerColor(marker, unpack(color)) end
+        end
     end
 end
 
-local refreshTimer = nil
-
-function doUpdateAllPolygonColors()
-    local marker
-    for _, vertex in ipairs(getElementsByType("vertex")) do
-        marker = getEditorRepresentation(vertex, "marker")
+local function doUpdateAllPolygonColors()
+    -- set all vertices color to DISCONNECTED_COLOR
+    for _, vertex in ipairs(getElementsByType(VERTEX_TYPE)) do
+        local marker = getEditorRepresentation(vertex, "marker")
         if marker then setMarkerColor(marker, unpack(DISCONNECTED_COLOR)) end
     end
 
-    for _, polygon in ipairs(getElementsByType("polygon")) do
+    -- update all polygons and their vertices colors to DEFAULT_COLOR
+    for _, polygon in ipairs(getElementsByType(POLYGON_TYPE)) do
         if polygon ~= selectedPolygon and isElementValid(polygon) then
             updatePolygonColors(polygon, false)
         end
     end
+
+    -- update selected polygon and its vertices colors to SELECTED_COLOR
     if isElementValid(selectedPolygon) then
         updatePolygonColors(selectedPolygon, true)
     end
+
+    colorUpdateDelayTimer = nil
 end
 
 function updateAllPolygonColors()
-    if refreshTimer and isTimer(refreshTimer) then killTimer(refreshTimer) end
-    refreshTimer = setTimer(doUpdateAllPolygonColors, 100, 1)
+    -- this function is a proxy for calls to function doUpdateAllPolygonColors
+    if colorUpdateDelayTimer and isTimer(colorUpdateDelayTimer) then
+        resetTimer(colorUpdateDelayTimer)
+    else
+        colorUpdateDelayTimer = setTimer(doUpdateAllPolygonColors, UPDATE_DELAY, 1)
+    end
 end
 
--- preparing lines
-local leftDir = Vector3(0, 0, 1)
-local posOffset = Vector3(0, 0, 1)
+---------------------
+-- PREPARING LINES --
+---------------------
+local POLYGON_UPDATE_INTERVAL = 125 -- updating polygon and vertex lists interval; ms
+local LINE_UPDATES_PER_FRAME = 10 -- number of lines to refresh positions for each frame
+
+local LEFT_DIR = Vector3(0, 0, 1)
+local LINE_OFFSET = Vector3(0, 0, 1)
 
 local lineList = {}
 local linesCount = 0
 local currentLine = 0
 
-function prepareLine(fromElement, toElement)
-    local marker = getEditorRepresentation(fromElement, "marker")
-    if marker then
-        col = {getMarkerColor(marker)}
-    else
-        col = DEFAULT_COLOR
+local polygons = {}
+local polygonsCount = 0
+local vertices = {}
+local verticesCount = 0
+
+function getValidEditorElementsByType(elementType)
+    -- this is a little quicker than getEditorElementsByType + isEditorElement
+    -- which is necessary given how frequently this function is called
+    local index = 0
+    local output = {}
+
+    for _, element in ipairs(getElementsByType(elementType, MAP_CONTAINER)) do
+        if not isElementDestroyed(element) then
+            index = index + 1
+            table.insert(output, element)
+        end
     end
 
-    local src = Vector3(edf.edfGetElementPosition(fromElement)) + posOffset
-    local dst = Vector3(edf.edfGetElementPosition(toElement)) + posOffset
+    return output, index
+end
+
+function updateCompanies()
+    polygons, polygonsCount = getValidEditorElementsByType(POLYGON_TYPE)
+    vertices, verticesCount = getValidEditorElementsByType(VERTEX_TYPE)
+
+    linesCount = polygonsCount + verticesCount
+end
+setTimer(updateCompanies, POLYGON_UPDATE_INTERVAL, 0)
+
+function prepareLine(fromElement, toElement)
+    local marker = getEditorRepresentation(fromElement, "marker")
+    local col = marker and {getMarkerColor(marker)} or DEFAULT_COLOR
+
+    local src = Vector3(edf.edfGetElementPosition(fromElement)) + LINE_OFFSET
+    local dst = Vector3(edf.edfGetElementPosition(toElement)) + LINE_OFFSET
 
     local dir = dst - src
     local len = dir:getLength()
@@ -73,7 +117,7 @@ function prepareLine(fromElement, toElement)
 
     dir:normalize()
 
-    local left = dir:cross(leftDir)
+    local left = dir:cross(LEFT_DIR)
 
     left.z = 0
     left:normalize()
@@ -85,31 +129,10 @@ function prepareLine(fromElement, toElement)
     return {col = col, src = src, dst = dst, p1 = p1, p2 = p2, mid = mid, len = len}
 end
 
--- updating companies and vertices lists
-local polygons = {}
-local polygonsCount = 0
-local vertices = {}
-local verticesCount = 0
-
-function filterEditorElements(list)
-    local outList = {}
-    for _, element in ipairs(list) do
-        if isElementValid(element) then table.insert(outList, element) end
-    end
-
-    return outList
-end
-
-function updateCompanies()
-    polygons = filterEditorElements(getElementsByType("polygon"))
-    polygonsCount = #polygons
-
-    vertices = filterEditorElements(getElementsByType("vertex"))
-    verticesCount = #vertices
-
-    linesCount = polygonsCount + verticesCount
-end
-setTimer(updateCompanies, POLYGON_UPDATE_INTERVAL, 0)
+-------------------
+-- DRAWING LINES --
+-------------------
+local LINE_DRAW_DIST = 500
 
 -- drawing lines
 function drawConnections()
@@ -145,7 +168,7 @@ function drawConnections()
     for _, line in ipairs(lineList) do
         if line then
             dist = getDistanceBetweenPoints3D(cam, line.mid)
-            maxDist = math.max(500, line.len / 1.5)
+            maxDist = math.max(LINE_DRAW_DIST, line.len / 1.5)
             if dist < maxDist then
                 alpha = math.unlerpclamped(maxDist, dist, 300) * 255
                 color = tocolor(line.col[1], line.col[2], line.col[3], alpha)
@@ -165,7 +188,9 @@ function drawConnections()
 end
 addEventHandler("onClientHUDRender", root, drawConnections)
 
--- maths
+-----------
+-- MATHS --
+-----------
 function math.lerp(from, alpha, to)
     return from + (to - from) * alpha
 end

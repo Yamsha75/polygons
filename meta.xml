@@ -2,9 +2,10 @@
     <info author="yamsha@dzakub.com" type="script" name="polygons"
         description="editor plugin for creating polygon colshapes" version="1.0.0"
         edf:definition="edf/polygons.edf" />
-    <oop>true</oop>
+    
+    <script src="colshape-creator.lua" type="server" />
+    <script src="map-loader.lua" type="server" />
 
-    <script src="utils.lua" type="server" />
-    <script src="colshapes.lua" type="server" />
-    <script src="mapmanager.lua" type="server" />
+    <file src="edf/icons/vertex.png" />
+    <file src="edf/icons/polygon.png" />
 </meta>

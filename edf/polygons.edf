@@ -1,13 +1,15 @@
+<!-- LINE DRAWING BASED ON MTA RACE GAMEMODE EDF BY arc_ -->
+
 <def name="Polygon colshape editor polugin">
-    <element name="vertex" friendlyname="Vertex">
+    <element name="polygon-vertex" friendlyname="Polygon vertex" icon="edf/icons/vertex.png">
         <data name="position" type="coord3d" required="true" default="0,0,0" />
-        <data name="next" type="element:vertex" required="false" default="" />
+        <data name="next" type="element:polygon-vertex" required="false" default="" />
         <marker editorOnly="true" type="checkpoint" size="0.25" color="#000000ee" />
     </element>
-    
-    <element name="polygon" friendlyname="Polygon">
+
+    <element name="polygon-center" friendlyname="Polygon center" icon="edf/icons/polygon.png">
         <data name="position" type="coord3d" required="true" default="0,0,0" />
-        <data name="first" type="element:vertex" required="false" default="" />
+        <data name="first" type="element:polygon-vertex" required="false" default="" />
         <marker editorOnly="true" type="checkpoint" size="1" color="#000000ee" />
     </element>
 

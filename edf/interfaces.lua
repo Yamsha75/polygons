@@ -1,6 +1,6 @@
-local interfaces = {"edf", "editor_gui", "editor_main"}
+local INTERFACES = {"edf", "editor_gui", "editor_main"}
 
-local interface_mt = {
+local INTERFACE_MT = {
     __index = function(table, key)
         return function(...)
             return call(table.resource, key, ...)
@@ -8,8 +8,6 @@ local interface_mt = {
     end,
 }
 
-function import(name)
-    _G[name] = setmetatable({resource = getResourceFromName(name)}, interface_mt)
+for _, name in ipairs(INTERFACES) do
+    _G[name] = setmetatable({resource = getResourceFromName(name)}, INTERFACE_MT)
 end
-
-for _, name in ipairs(interfaces) do import(name) end
