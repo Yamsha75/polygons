@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9
 
 
 ### Tips for using in editor
-![colors](readme-images/colors.png)
+![colors](https://user-images.githubusercontent.com/5197581/115051303-f6783980-9edc-11eb-9402-d98ff92fd54f.png)
 
 - Connections between vertices are drawn as directed arrows
 - Colors of marker representations and arrows allow disgtinguishing selected polygons (red) from others (blue) and vertices without `polygon-center` (black)
