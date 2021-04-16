@@ -154,10 +154,10 @@ end
 if not LOADER_NAME then
     local thisResource = getThisResource()
 
-    local colshapes = createColshapesFromResource(thisResource)
-    if colshapes then
+    COLSHAPES = createColshapesFromResource(thisResource)
+    if COLSHAPES then
         outputDebugString(string.format("%s: loaded %d polygon colshapes",
-            getResourceName(thisResource), #colshapes), 3)
+            getResourceName(thisResource), #COLSHAPES), 3)
     else
         outputDebugString(string.format("%s: found no polygons to create colshapes",
             getResourceName(thisResource)), 2)
