@@ -89,7 +89,10 @@ end
 local function createPolygonColshape(polygon)
     local vertices = getPolygonVertices(polygon)
 
-    if not vertices or #vertices < 3 then return end
+    if not vertices or #vertices < 3 then
+        outputDebugString("Polygon has less than 3 vertices!", 1)
+        return false
+    end
 
     local x, y = getElementPosition(polygon)
     local colshapePosition = Vector2(x, y) -- colshape's "center" position
@@ -100,7 +103,10 @@ local function createPolygonColshape(polygon)
     end
 
     local colshape = createColPolygon(colshapePosition, unpack(coords))
-    if not colshape then return false end
+    if not colshape then
+        outputDebugString("createColPolygon returned false!", 1)
+        return false
+    end
 
     setElementData(polygon, "polygon-colshape", colshape)
     setElementParent(colshape, polygon)
