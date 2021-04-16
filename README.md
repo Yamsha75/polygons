@@ -15,7 +15,9 @@ in Editor and save it again. All non-existing "pointers" to first or next vertic
 be unset. Due to the nature of editor's undo/redo functionality, one player can undo
 other player's changes and thus cause the inconvenience described above.
 
-## Convenience features:
+![colors](readme-images/colors.png)
+
+## Features:
 - Both elements are represented by markers and connections (edges) are represented by
 arrows
 
