@@ -1,14 +1,6 @@
 POLYGON_TYPE = "polygon-center"
 VERTEX_TYPE = "polygon-vertex"
 
-function isElementValid(element, elementType)
-    if elementType then
-        return isElement(element) and getElementType(element) == elementType
-    else
-        return isElement(element)
-    end
-end
-
 function getElementMapElement(element)
     local parent = getElementParent(element)
 
@@ -35,7 +27,7 @@ function getElementPropertyValue(theElement, propertyName, expectedElementType)
     end
 
     if isElement(propertyValue) then
-        if isElementValid(propertyValue, expectedElementType) then
+        if getElementType(propertyValue) == expectedElementType then
             return propertyValue
         else
             outputDebugString(string.format(
