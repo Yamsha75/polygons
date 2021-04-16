@@ -1,4 +1,4 @@
-# What is it
+# Polygons
 This resource provides an easy way to create colShape polygons using built-in editor. It consists of two things:
 - EDF, which does the work in editor
 - a loader, which creates actual colShape elements in your server
