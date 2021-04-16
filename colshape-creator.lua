@@ -9,10 +9,10 @@ function isElementValid(element, elementType)
     end
 end
 
-function getElementResourceRoot(element)
+function getElementMapElement(element)
     local parent = getElementParent(element)
 
-    while parent and getElementType(parent) ~= "resource" do
+    while parent and getElementType(parent) ~= "map" do
         parent = getElementParent(parent)
     end
 
@@ -47,8 +47,8 @@ function getElementPropertyValue(theElement, propertyName, expectedElementType)
     elseif type(propertyValue) == "string" then
         -- property value is a string; check if its a valid element ID; to avoid
         -- uncertainty with multiple elements using same ID, search only through
-        -- theElement's parent resource elements
-        local resourceRootElement = getElementResourceRoot(theElement)
+        -- theElement's parent map's elements
+        local mapRootElement = getElementMapElement(theElement)
         for _, element in ipairs(getElementsByType(expectedElementType, mapRootElement)) do
             if getElementID(element) == propertyValue then
                 -- found; update theElement's property to the element to skip these
