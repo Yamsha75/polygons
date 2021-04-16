@@ -104,12 +104,12 @@ mapPolygons = getElementsByType("polygon-center", mapRootElement))
     -- this method assumes the user doesn't add more colshapes as myPolygon's children
     myColshape = getElementsByType("colshape", myPolygon)[1]
     ```
-# Exporting polygons as Lua code
+<!--# Exporting polygons as Lua code
 ## *Coming Soon! (probably)*
 Exported code will look like this:
 ```lua
 createColPolygon(x, y, 1, 1, 3, 5, 9, 17, ...)
-```
+```-->
 # EDF elements explained
 Each abstract polygon, which defines the shape of the actual colShape polygon element, consists of one `polygon-center` element and at least three `polygon-vertex` elements.
 
