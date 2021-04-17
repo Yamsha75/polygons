@@ -7,6 +7,7 @@ It works well with Editor's undo/redo function, and supports multiple players, s
 
 # Example of using it in editor
 https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9464-1ee0b7008fd4.mp4
+
 # Getting started
 
 ## How to install it
@@ -29,7 +30,6 @@ https://user-images.githubusercontent.com/5197581/115022024-17309700-9ebd-11eb-9
 10. Add more polygons if necessary
 11. Save map
 12. Done!
-
 
 ### Tips for using in editor
 ![colors](https://user-images.githubusercontent.com/5197581/115051303-f6783980-9edc-11eb-9402-d98ff92fd54f.png)
@@ -123,8 +123,6 @@ Together they define an abstract 'polygon', which is used to create the actual c
 # Known issues
 The Editor plugin and loader script don't check if any vertex belongs to multiple `polygon-center` elements. This can result in "joined" colShapes. Please make sure to inspect your polygons before saving the map.
 As Editor's undo/redo is global for the server, one player performing an undo can break other players' polygons. Please be careful with it when working with your friends
-
-
 
 # Sources
 Line drawing in editor based on MTA Race gamemode EDF by arc_:
