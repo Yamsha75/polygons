@@ -26,4 +26,5 @@
     <script src="edf/polygons.lua" type="client" />
     <script src="edf/draw-edges.lua" type="client" />
     <script src="edf/edf-client.lua" type="client" />
+    <script src="edf/export-gui.lua" type="client" />
 </def>

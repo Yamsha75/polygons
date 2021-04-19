@@ -208,15 +208,3 @@ function showInfo(message, r, g, b)
     outputChatBox(message, r, g, b)
     editor_gui.outputMessage(message, r, g, b, 5000)
 end
-setTimer(showInfo, 5000, 1, "Use command 'showpoly' to see colshapes")
-
-local function showPolyCommandHandler()
-    local enabled = not getDevelopmentMode()
-
-    setDevelopmentMode(enabled)
-    showCol(enabled)
-
-    message = "showing colshapes is now " .. (enabled and "enabled" or "disabled")
-    showInfo(message)
-end
-addCommandHandler("showpoly", showPolyCommandHandler)
