@@ -5,7 +5,7 @@ local previousElement = nil
 selectedPolygon = nil
 
 local function onClientMapOpenedHandler()
-    setTimer(updateAllPolygonColors, 500, 1)
+    updateAllPolygonColors()
 end
 addEventHandler("onClientMapOpened", root, onClientMapOpenedHandler)
 

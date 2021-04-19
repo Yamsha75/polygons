@@ -46,7 +46,7 @@ local function onMapOpenedHandler()
         end
     end
 
-    triggerClientEvent("onClientMapOpened", source)
+    setTimer(triggerClientEvent, 500, 1, "onClientMapOpened", source)
 end
 addEventHandler("onMapOpened", root, onMapOpenedHandler)
 
