@@ -1,3 +1,5 @@
+addEvent("onClientEDFStart")
+addEvent("onClientEDFStop")
 addEvent("onClientMapOpened", true)
 addEvent("onClientElementPostCreate", true)
 
@@ -9,9 +11,15 @@ local function onClientMapOpenedHandler()
 end
 addEventHandler("onClientMapOpened", root, onClientMapOpenedHandler)
 
+function onStart()
+    triggerEvent("onClientEDFStart", localPlayer)
+end
+
 function onStop()
     previousElement = nil
     selectedPolygon = nil
+
+    triggerEvent("onClientEDFStop", localPlayer)
 end
 
 local function onClientElementSelectHandler()
