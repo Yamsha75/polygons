@@ -108,10 +108,10 @@ resource on your server when using this method!
 Using a script from this file in your own map:
 
 1. Create and save your map
-2. Copy `colshape-creator.lua` from this resource into your map resource
+2. Copy `loader.lua` from this resource into your map resource
 2. In your map resource's meta.xml file add:
     ```xml
-    <script src="colshape-creator.lua" type="server" />
+    <script src="loader.lua" type="server" />
     ```
 3. Start (or restart) your map on your server
 4. Done!
