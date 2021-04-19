@@ -89,7 +89,7 @@ function getValidEditorElementsByType(elementType)
     for _, element in ipairs(getElementsByType(elementType, MAP_CONTAINER)) do
         if not isElementDestroyed(element) then
             index = index + 1
-            table.insert(output, element)
+            output[index] = element
         end
     end
 
