@@ -148,7 +148,7 @@ function drawConnections()
             polygon = polygons[currentLine]
             if isElementValid(polygon) then
                 vertex = getFirstVertex(polygon)
-                if vertex then
+                if vertex and not isElementDestroyed(vertex) then
                     lineList[currentLine] = prepareLine(polygon, vertex)
                 end
             end
@@ -156,7 +156,7 @@ function drawConnections()
             vertex = vertices[currentLine - polygonsCount]
             if isElementValid(vertex) then
                 nextVertex = getNextVertex(vertex)
-                if nextVertex then
+                if nextVertex and not isElementDestroyed(nextVertex) then
                     lineList[currentLine] = prepareLine(vertex, nextVertex)
                 end
             end
