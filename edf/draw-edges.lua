@@ -173,11 +173,7 @@ function drawConnections()
                 alpha = math.unlerpclamped(maxDist, dist, 300) * 255
                 color = tocolor(line.col[1], line.col[2], line.col[3], alpha)
 
-                if dist > 100 then
-                    width = 10 + (dist - 100) / 200
-                else
-                    width = 10
-                end
+                width = dist < 100 and 10 or 10 + (dist - 100) / 200
 
                 dxDrawLine3D(line.src, line.dst, color, width, false)
                 dxDrawLine3D(line.dst, line.p1, color, width, false)
