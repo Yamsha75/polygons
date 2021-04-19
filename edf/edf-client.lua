@@ -192,10 +192,13 @@ local function onClientElementDestroy()
 end
 addEventHandler("onClientElementDestroyed", root, onClientElementDestroy)
 
-local function showInfo(message)
+function showInfo(message, r, g, b)
+    r = tonumber(r) or 0
+    g = tonumber(g) or 255
+    b = tonumber(b) or 0
     message = "INFO: polygons: " .. message
-    -- outputChatBox(message)
-    editor_gui.outputMessage(message, 0, 255, 0, 5000)
+    outputChatBox(message, r, g, b)
+    editor_gui.outputMessage(message, r, g, b, 5000)
 end
 setTimer(showInfo, 5000, 1, "Use command 'showpoly' to see colshapes")
 
