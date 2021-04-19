@@ -140,12 +140,11 @@ function drawConnections()
 
     local numberToDo = math.min(linesCount, LINE_UPDATES_PER_FRAME)
 
-    local polygon, vertex, nextVertex
     for _ = 1, numberToDo do
         currentLine = currentLine % linesCount + 1
         lineList[currentLine] = false
         if currentLine <= polygonsCount then
-            polygon = polygons[currentLine]
+            local polygon = polygons[currentLine]
             if isElementValid(polygon) then
                 vertex = getFirstVertex(polygon)
                 if vertex and not isElementDestroyed(vertex) then
@@ -153,7 +152,7 @@ function drawConnections()
                 end
             end
         else
-            vertex = vertices[currentLine - polygonsCount]
+            local vertex = vertices[currentLine - polygonsCount]
             if isElementValid(vertex) then
                 nextVertex = getNextVertex(vertex)
                 if nextVertex and not isElementDestroyed(nextVertex) then
@@ -163,17 +162,16 @@ function drawConnections()
         end
     end
 
-    local dist, maxDist, width, color, alpha
     local cam = Vector3(getCameraMatrix())
     for _, line in ipairs(lineList) do
         if line then
-            dist = getDistanceBetweenPoints3D(cam, line.mid)
-            maxDist = math.max(LINE_DRAW_DIST, line.len / 1.5)
+            local dist = getDistanceBetweenPoints3D(cam, line.mid)
+            local maxDist = math.max(LINE_DRAW_DIST, line.len / 1.5)
             if dist < maxDist then
-                alpha = math.unlerpclamped(maxDist, dist, 300) * 255
-                color = tocolor(line.col[1], line.col[2], line.col[3], alpha)
+                local alpha = math.unlerpclamped(maxDist, dist, 300) * 255
+                local color = tocolor(line.col[1], line.col[2], line.col[3], alpha)
 
-                width = dist < 100 and 10 or 10 + (dist - 100) / 200
+                local width = dist < 100 and 10 or 10 + (dist - 100) / 200
 
                 dxDrawLine3D(line.src, line.dst, color, width, false)
                 dxDrawLine3D(line.dst, line.p1, color, width, false)
