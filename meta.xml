@@ -3,8 +3,8 @@
         description="editor plugin for creating polygon colshapes" version="1.0.0"
         edf:definition="edf/polygons.edf" />
     
-    <script src="map-loader.lua" type="server" />
-    <script src="colshape-creator.lua" type="server" />
+    <script src="manager.lua" type="server" />
+    <script src="loader.lua" type="server" />
 
     <file src="edf/icons/vertex.png" />
     <file src="edf/icons/polygon.png" />
