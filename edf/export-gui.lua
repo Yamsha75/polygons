@@ -44,7 +44,7 @@ gCoords.buttonExport.w = 70
 gCoords.buttonExport.h = 25
 gCoords.buttonExport.x = gCoords.buttonCopy.x - (gCoords.buttonExport.w + gSpacing)
 gCoords.buttonExport.y = gCoords.buttonCopy.y
-gCoords.buttonExport.text = "Export"
+gCoords.buttonExport.text = "Refresh"
 
 gCoords.memo = {}
 gCoords.memo.w = gCoords.window.w - 2 * gSpacing
