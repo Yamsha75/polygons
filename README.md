@@ -130,12 +130,12 @@ polygons in that resource
     -- from the same resource as the loader:
     myColshapes = COLSHAPES
     ```
-2. You can easily retrive the created colShape by using its `polygon-center` element's
+2. You can easily retrieve the created colShape by using its `polygon-center` element's
 ID, provided it is unique across all started maps
     ```lua
     -- uses elementID of the "polygon-center" from the map, adding " colshape" after it
     -- for elementID "my-polygon", it would be:
-    myColshape = getElementData("my-polygon colshape")
+    myColshape = getElementByID("my-polygon colshape")
     ```
 
 Next options require retrieving the `polygon-center` element first, for example:
