@@ -52,7 +52,7 @@ gCoords.memo.h = gCoords.window.h - (gSpacing + 20) -
                      (gCoords.buttonClose.h + 2 * gSpacing)
 gCoords.memo.x = gSpacing
 gCoords.memo.y = gSpacing + 20 -- 20 pixels to give space to window title bar
-gCoords.memo.text = "select a polygon and click 'export' to start"
+gCoords.memo.text = ""
 
 gCoords.radioPairs = {}
 gCoords.radioPairs.w = 45
