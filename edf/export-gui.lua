@@ -19,8 +19,8 @@ gCoords.buttonShow.y = gCoords.buttonDraw.y - (gCoords.buttonShow.h + gSpacing)
 gCoords.buttonShow.text = "Export selected polygon"
 
 gCoords.window = {}
-gCoords.window.w = math.min(512, screenW - 128)
-gCoords.window.h = math.min(512, screenH - 128)
+gCoords.window.w = math.max(512, screenW * 0.5)
+gCoords.window.h = math.max(512, screenH * 0.75)
 gCoords.window.x = (screenW - gCoords.window.w) / 2
 gCoords.window.y = (screenH - gCoords.window.h) / 2
 gCoords.window.text = "Polygon exporting"
